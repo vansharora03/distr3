@@ -9,7 +9,7 @@ public class Coordinator {
     public int port;
     public int timeThreshold;
     public Message[] messages;
-    public HashMap<String, Main> participants;S
+    public HashMap<String, Main> participants;
     
     public static void main(String[] args) {
         if (args.length != 1) {
