@@ -1,6 +1,6 @@
 import java.net.Socket;
 
-public class Participant {
+public class Main {
 
     public static void main(String[] args) {
         try {
@@ -10,4 +10,4 @@ public class Participant {
             System.exit(1);
         }
     }
-}
+}   
