@@ -6,8 +6,9 @@ public class Participant {
     public boolean isRegistered;
     public boolean isConnected;
     public Socket socket;
+    public String id;
 
-    public Participant(String ip, int port) {
+    public Participant(String ip) {
         this.ip = ip;
         this.port = port;
         this.isRegistered = false;
