@@ -60,10 +60,7 @@ public class Coordinator {
         System.out.println("Client connected: " + clientSocket.getInetAddress());
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            String command;
-            while ((command = in.readLine()) != null) {
-                System.out.println("Received command: " + command);
-            }
+
         } catch (IOException e) {
             System.out.println("Error reading from client");
         }
