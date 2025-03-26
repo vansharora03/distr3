@@ -3,13 +3,12 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Main {
-    // Variables for all parameters in the config file
-    private String coordinatorIP;
-    private int coordinatorPort;
-    private int id;
-    private String messageFile;
-    private int myPort; // Port for receiving messages
-    private ServerSocket serverSocket;
+    String coordinatorIP;
+    int coordinatorPort;
+    int id;
+    String messageFile;
+    int myPort;
+    ServerSocket serverSocket;
 
     public Main(String configFile) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(configFile));
@@ -30,7 +29,7 @@ public class Main {
                 }
             };
             new Thread(handleCommands).start();
-            System.out.println("Created thread1 for user commands");
+            System.out.println("Created thread A for user commands");
 
             Runnable listenMessage = () -> {
                 try {
@@ -40,7 +39,7 @@ public class Main {
                 }
             };
             new Thread(listenMessage).start();
-            System.out.println("Created thread2 for message reception");
+            System.out.println("Created thread B for message reception");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,15 +85,20 @@ public class Main {
             } else if (command.startsWith("reconnect")) {
                 try {
                     myPort = Integer.parseInt(command.split(" ")[1]);
+                    // Already exists
                     if (serverSocket != null && serverSocket.isClosed() == false) {
+
                         String myIP = InetAddress.getLocalHost().getHostAddress();
                         sendToCoordinator("reconnect " + id + " " + myIP + " " + myPort);
                         System.out.println("Reconnected to coordinator at the same port " + myPort);
+
                     } else {
+
                         serverSocket = new ServerSocket(myPort);
                         String myIP = InetAddress.getLocalHost().getHostAddress();
                         sendToCoordinator("reconnect " + id + " " + myIP + " " + myPort);
                         System.out.println("Reconnected and listening for messages on port " + myPort);
+
                     }
 
                 } catch (IOException e) {
@@ -107,15 +111,12 @@ public class Main {
         }
     }
 
-    /**
-     * Thread B: Listens for messages from the coordinator
-     */
     public void listenMessage() throws IOException {
         while (true) {
             if (serverSocket == null)
                 continue;
 
-            Socket socket = serverSocket.accept(); // Accept incoming messages
+            Socket socket = serverSocket.accept();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String message = in.readLine();
 
