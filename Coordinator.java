@@ -46,11 +46,9 @@ public class Coordinator {
                 while (true) {
                     try {
                         Socket clientSocket = serverSocket.accept();
-                        Participant p = new Participant(clientSocket.getInetAddress().toString(),
-                                clientSocket.getPort());
-                        p.socket = clientSocket;
+                        Participant p = new Participant(clientSocket.getInetAddress().toString());
                         participants.put(p.ip, p);
-                        handleClient(p);
+                        handleClient(clientSocket);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -62,9 +60,8 @@ public class Coordinator {
         }
 
     }
-
-    public static void handleClient(Participant participant) {
-        Socket clientSocket = participant.socket;
+    public static void handleClient(Socket clientSocket) {
+        Participant participant = participants.get(clientSocket.getInetAddress().toString());
         System.out.println("Client connected: " + clientSocket.getInetAddress());
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -91,20 +88,24 @@ public class Coordinator {
                     participant.socket = socket;
                     for (Message message : messages) {
                         if (message.timestamp.getTime() > new Date().getTime() - timeThreshold) {
-                            new Thread(() -> out.println(message.message)).start();
+                            new Thread(() -> out.println("Sender: " + message.sender.id + "Message: " + message.message)).start();
 
                         }
                     }
                 } else if (command.startsWith("msend")) {
                     String[] tokens = command.split(" ");
                     String message = tokens[1];
-                    messages.add(new Message(new Date(), message));
+                    messages.add(new Message(new Date(), message, participant));
                     for (Participant p : participants.values()) {
                         if (p.isConnected && p.isRegistered) {
                             PrintWriter pout = new PrintWriter(p.socket.getOutputStream(), true);
-                            new Thread(() -> pout.println(message)).start();
+                            new Thread(() -> pout.println("Sender: " + participant.id + "Message: " + message)).start();
                         }
                     }
+                }
+                else if (command.startsWith("id")) {
+                    String[] tokens = command.split(" ");
+                    participant.id = tokens[1];
                 }
 
             }
