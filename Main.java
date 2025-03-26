@@ -71,22 +71,25 @@ public class Main {
             if (command.startsWith("register ")) {
                 try {
                     myPort = Integer.parseInt(command.split(" ")[1]);
-                    serverSocket = new ServerSocket(myPort);
-                    System.out.println("Listening for messages on port " + myPort);
+
+                    // serverSocket = new ServerSocket(myPort);
+                    // System.out.println("Listening for messages on port " + myPort);
 
                     String myIP = InetAddress.getLocalHost().getHostAddress();
 
                     sendToCoordinator("register " + id + " " + myIP + " " + myPort);
+
                 } catch (Exception e) {
                     System.out.println("Invalid port number.");
                     continue;
                 }
             } else if (command.startsWith("reconnect")) {
                 try {
+
                     myPort = Integer.parseInt(command.split(" ")[1]);
                     String myIP = InetAddress.getLocalHost().getHostAddress();
                     sendToCoordinator("reconnect " + id + " " + myIP + " " + myPort);
-                    System.out.println("Reconnected to coordinator at the same port " + myPort);
+                    System.out.println("Reconnected to coordinator at port " + myPort);
 
                 } catch (IOException e) {
                     e.printStackTrace();
