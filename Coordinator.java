@@ -49,7 +49,9 @@ public class Coordinator {
                     try {
                         Socket clientSocket = serverSocket.accept();
                         Participant p = new Participant(clientSocket.getInetAddress().toString().substring(1));
-                        participants.put(p.ip, p);
+                        if (!participants.containsKey(p.ip)) {
+                            participants.put(p.ip, p);
+                        }
                         handleClient(clientSocket);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -79,7 +81,9 @@ public class Coordinator {
                     participant.socket = socket;
                     participant.isRegistered = true;
                 } else if (command.startsWith("deregister")) {
+                    participant.socket.close();
                     participant.socket = null;
+                    participant.isRegistered = false;
                 } else if (command.startsWith("disconnect")) {
                     participant.isConnected = false;
                     participant.socket.close();
@@ -87,6 +91,7 @@ public class Coordinator {
                     String[] tokens = command.split(" ");
                     participant.port = Integer.parseInt(tokens[1]);
                     participant.isConnected = true;
+                    participant.socket.close();
                     Socket socket = new Socket(participant.ip, participant.port);
                     participant.socket = socket;
                     for (Message message : messages) {
@@ -100,11 +105,9 @@ public class Coordinator {
                     String message = tokens[1];
                     messages.add(new Message(new Date(), message, participant));
                     for (Participant p : participants.values()) {
-                        System.out.println(p.isConnected + " " + p.isRegistered);
                         if (p.isConnected && (p.socket != null)) {
                             PrintWriter pout = new PrintWriter(p.socket.getOutputStream(), true);
-                            System.out.println("Sender: " + participant.id + "Message: " + message);
-                            pout.println("Sender: " + participant.id + "Message: " + message);
+                            new Thread(() -> pout.println("Sender: " + participant.id + " Message: " + message)).start();
                         }
                     }
                 }

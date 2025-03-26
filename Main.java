@@ -17,6 +17,10 @@ public class Main {
         String[] line = reader.readLine().trim().split(" ");
         this.coordinatorIP = line[0];
         this.coordinatorPort = Integer.parseInt(line[1]);
+        Socket socket = new Socket(coordinatorIP, coordinatorPort);
+        PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        out.println("id " + id);
+        socket.close();
         this.serverSocket = null;
     }
 
@@ -102,14 +106,12 @@ public class Main {
     public void listenMessage() throws IOException {
         while (true) {
             if (serverSocket == null) continue;
-            System.out.println("Listening for messages on port " + myPort);
             Socket socket = serverSocket.accept();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String message = in.readLine();
 
             if (message != null) {
                 logMessages(message);
-                System.out.println("Received: " + message);
             }
         }
     }
