@@ -16,6 +16,8 @@ public class Coordinator {
     public static HashMap<String, Participant> participants;
 
     public static void main(String[] args) {
+        participants = new HashMap<>();
+        messages = new ArrayList<>();
         if (args.length != 1) {
             System.out.println("Usage: java Coordinator <config file name>");
             System.exit(1);
@@ -46,7 +48,7 @@ public class Coordinator {
                 while (true) {
                     try {
                         Socket clientSocket = serverSocket.accept();
-                        Participant p = new Participant(clientSocket.getInetAddress().toString());
+                        Participant p = new Participant(clientSocket.getInetAddress().toString().substring(1));
                         participants.put(p.ip, p);
                         handleClient(clientSocket);
                     } catch (IOException e) {
@@ -61,7 +63,7 @@ public class Coordinator {
 
     }
     public static void handleClient(Socket clientSocket) {
-        Participant participant = participants.get(clientSocket.getInetAddress().toString());
+        Participant participant = participants.get(clientSocket.getInetAddress().toString().substring(1));
         System.out.println("Client connected: " + clientSocket.getInetAddress());
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -77,9 +79,10 @@ public class Coordinator {
                     participant.socket = socket;
                     participant.isRegistered = true;
                 } else if (command.startsWith("deregister")) {
-                    participant.isRegistered = false;
+                    participant.socket = null;
                 } else if (command.startsWith("disconnect")) {
                     participant.isConnected = false;
+                    participant.socket.close();
                 } else if (command.startsWith("reconnect")) {
                     String[] tokens = command.split(" ");
                     participant.port = Integer.parseInt(tokens[1]);
@@ -97,9 +100,11 @@ public class Coordinator {
                     String message = tokens[1];
                     messages.add(new Message(new Date(), message, participant));
                     for (Participant p : participants.values()) {
-                        if (p.isConnected && p.isRegistered) {
+                        System.out.println(p.isConnected + " " + p.isRegistered);
+                        if (p.isConnected && (p.socket != null)) {
                             PrintWriter pout = new PrintWriter(p.socket.getOutputStream(), true);
-                            new Thread(() -> pout.println("Sender: " + participant.id + "Message: " + message)).start();
+                            System.out.println("Sender: " + participant.id + "Message: " + message);
+                            pout.println("Sender: " + participant.id + "Message: " + message);
                         }
                     }
                 }
@@ -111,6 +116,8 @@ public class Coordinator {
             }
 
         } catch (IOException e) {
+            System.out.println(e);
+            e.printStackTrace();
             System.out.println("Error reading from client");
         }
         return;

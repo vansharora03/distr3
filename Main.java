@@ -8,7 +8,7 @@ public class Main {
     int id;
     String messageFile;
     int myPort;
-    ServerSocket serverSocket;
+    public volatile ServerSocket serverSocket;
 
     public Main(String configFile) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(configFile));
@@ -17,6 +17,7 @@ public class Main {
         String[] line = reader.readLine().trim().split(" ");
         this.coordinatorIP = line[0];
         this.coordinatorPort = Integer.parseInt(line[1]);
+        this.serverSocket = null;
     }
 
     public void start() {
@@ -72,12 +73,9 @@ public class Main {
                 try {
                     myPort = Integer.parseInt(command.split(" ")[1]);
 
-                    // serverSocket = new ServerSocket(myPort);
-                    // System.out.println("Listening for messages on port " + myPort);
 
-                    String myIP = InetAddress.getLocalHost().getHostAddress();
-
-                    sendToCoordinator("register " + id + " " + myIP + " " + myPort);
+                    serverSocket = new ServerSocket(myPort);  
+                    sendToCoordinator("register " + myPort);
 
                 } catch (Exception e) {
                     System.out.println("Invalid port number.");
@@ -103,9 +101,8 @@ public class Main {
 
     public void listenMessage() throws IOException {
         while (true) {
-            if (serverSocket == null)
-                continue;
-
+            if (serverSocket == null) continue;
+            System.out.println("Listening for messages on port " + myPort);
             Socket socket = serverSocket.accept();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String message = in.readLine();

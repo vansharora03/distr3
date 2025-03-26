@@ -10,7 +10,7 @@ public class Participant {
 
     public Participant(String ip) {
         this.ip = ip;
-        this.port = port;
+        this.port = -1;
         this.isRegistered = false;
         this.isConnected = true;
         this.socket = null;
