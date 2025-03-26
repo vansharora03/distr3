@@ -84,21 +84,9 @@ public class Main {
             } else if (command.startsWith("reconnect")) {
                 try {
                     myPort = Integer.parseInt(command.split(" ")[1]);
-                    // Already exists
-                    if (serverSocket != null && serverSocket.isClosed() == false) {
-
-                        String myIP = InetAddress.getLocalHost().getHostAddress();
-                        sendToCoordinator("reconnect " + id + " " + myIP + " " + myPort);
-                        System.out.println("Reconnected to coordinator at the same port " + myPort);
-
-                    } else {
-
-                        serverSocket = new ServerSocket(myPort);
-                        String myIP = InetAddress.getLocalHost().getHostAddress();
-                        sendToCoordinator("reconnect " + id + " " + myIP + " " + myPort);
-                        System.out.println("Reconnected and listening for messages on port " + myPort);
-
-                    }
+                    String myIP = InetAddress.getLocalHost().getHostAddress();
+                    sendToCoordinator("reconnect " + id + " " + myIP + " " + myPort);
+                    System.out.println("Reconnected to coordinator at the same port " + myPort);
 
                 } catch (IOException e) {
                     e.printStackTrace();
