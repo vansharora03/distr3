@@ -5,12 +5,13 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+
 public class Coordinator {
     public int port;
     public int timeThreshold;
     public Message[] messages;
     public HashMap<String, Main> participants;
-    
+
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Usage: java Coordinator <config file name>");
@@ -54,11 +55,15 @@ public class Coordinator {
         }
 
     }
+
     public static void handleClient(Socket clientSocket) {
         System.out.println("Client connected: " + clientSocket.getInetAddress());
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
+            String command;
+            while ((command = in.readLine()) != null) {
+                System.out.println("Received command: " + command);
+            }
         } catch (IOException e) {
             System.out.println("Error reading from client");
         }
