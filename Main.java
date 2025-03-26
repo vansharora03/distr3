@@ -67,14 +67,13 @@ public class Main {
             System.out.print("> ");
             String command = scanner.nextLine();
 
-            // Handle the register command with user-defined port
+            // Handle the register command with user defined port
             if (command.startsWith("register ")) {
                 try {
                     myPort = Integer.parseInt(command.split(" ")[1]);
                     serverSocket = new ServerSocket(myPort);
                     System.out.println("Listening for messages on port " + myPort);
 
-                    // Get the Participant's IP address
                     String myIP = InetAddress.getLocalHost().getHostAddress();
 
                     sendToCoordinator("register " + id + " " + myIP + " " + myPort);
