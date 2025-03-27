@@ -77,8 +77,7 @@ public class Main {
                 try {
                     myPort = Integer.parseInt(command.split(" ")[1]);
 
-
-                    serverSocket = new ServerSocket(myPort);  
+                    serverSocket = new ServerSocket(myPort);
                     sendToCoordinator("register " + myPort);
 
                 } catch (Exception e) {
@@ -89,8 +88,8 @@ public class Main {
                 try {
 
                     myPort = Integer.parseInt(command.split(" ")[1]);
-                    String myIP = InetAddress.getLocalHost().getHostAddress();
-                    sendToCoordinator("reconnect " + id + " " + myIP + " " + myPort);
+                    serverSocket = new ServerSocket(myPort);
+                    sendToCoordinator("reconnect " + myPort);
                     System.out.println("Reconnected to coordinator at port " + myPort);
 
                 } catch (IOException e) {
@@ -105,7 +104,8 @@ public class Main {
 
     public void listenMessage() throws IOException {
         while (true) {
-            if (serverSocket == null) continue;
+            if (serverSocket == null)
+                continue;
             Socket socket = serverSocket.accept();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String message = in.readLine();
