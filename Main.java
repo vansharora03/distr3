@@ -9,6 +9,7 @@ public class Main {
     String messageFile;
     int myPort;
     public volatile ServerSocket serverSocket;
+    public volatile Socket socket;
 
     public Main(String configFile) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(configFile));
@@ -103,11 +104,17 @@ public class Main {
     }
 
     public void listenMessage() throws IOException {
+        socket = null;
         while (true) {
             if (serverSocket == null)
                 continue;
-            Socket socket = serverSocket.accept();
+            System.out.println("Listening for messages...");
+            if (socket == null) {
+                socket = serverSocket.accept();
+            }
+            System.out.println("Socket accepted");
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            System.out.println("Received message from coordinator");
             String message = in.readLine();
 
             if (message != null) {
@@ -117,6 +124,12 @@ public class Main {
     }
 
     private void sendToCoordinator(String command) {
+        if (command.startsWith("deregister")) {
+            socket = null;
+        } 
+        else if (command.startsWith("disconnect")) {
+            socket = null;
+        }
         try (Socket socket = new Socket(coordinatorIP, coordinatorPort);
                 PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
             out.println(command);
