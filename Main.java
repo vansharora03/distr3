@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Main {
     String coordinatorIP;
     int coordinatorPort;
-    int id;
+    String id;
     String messageFile;
     int myPort;
     public volatile ServerSocket serverSocket;
@@ -14,7 +14,7 @@ public class Main {
 
     public Main(String configFile) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(configFile));
-        this.id = Integer.parseInt(reader.readLine().trim());
+        this.id = reader.readLine().trim();
         this.messageFile = reader.readLine().trim();
         String[] line = reader.readLine().trim().split(" ");
         this.coordinatorIP = line[0];
