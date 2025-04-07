@@ -60,6 +60,7 @@ public class Coordinator {
             }).start();
         } catch (IOException e) {
             System.out.println("Error creating client connections");
+            e.printStackTrace();
             System.exit(1);
         }
 
@@ -82,10 +83,13 @@ public class Coordinator {
                     participant.isRegistered = true;
                     participant.out = new PrintWriter(socket.getOutputStream(), true);
                 } else if (command.startsWith("deregister")) {
+                    participant.socket.close();
                     participant.socket = null;
                     participant.out = null;
                     participant.isRegistered = false;
                 } else if (command.startsWith("disconnect")) {
+                    participant.socket.close();
+                    participant.socket = null;
                     participant.isConnected = false;
                 } else if (command.startsWith("reconnect")) {
                     String[] tokens = command.split(" ");
