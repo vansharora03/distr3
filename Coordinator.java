@@ -106,7 +106,10 @@ public class Coordinator {
                     }
                 } else if (command.startsWith("msend")) {
                     String[] tokens = command.split(" ");
-                    String message = tokens[1];
+                    String message = "";
+                    for (int i = 1; i < tokens.length; i++) {
+                        message += tokens[i] + " ";
+                    }
                     messages.add(new Message(new Date(), message, participant));
                     for (Participant p : participants.values()) {
                         System.out.println(p.isConnected + " " + p.socket);
