@@ -111,11 +111,12 @@ public class Coordinator {
                         message += tokens[i] + " ";
                     }
                     messages.add(new Message(new Date(), message, participant));
+                    String final_message = message;
                     for (Participant p : participants.values()) {
                         System.out.println(p.isConnected + " " + p.socket);
                         if (p.isConnected && (p.socket != null)) {
                             new Thread(() -> {
-                                p.out.println("Sender: " + participant.id + " Message: " + message); 
+                                p.out.println("Sender: " + participant.id + " Message: " +final_message); 
                             }).start();
 
                         }
