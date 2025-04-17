@@ -100,11 +100,15 @@ public class Coordinator {
                     participant.out = new PrintWriter(socket.getOutputStream(), true);
                     for (Message message : messages) {
                         if (message.timestamp.getTime() > new Date().getTime() - (timeThreshold * 1000)) {
+                            System.out.println("Sending message to " + participant.id);
                             new Thread(() -> participant.out.println("Sender: " + message.sender.id + "Message: " + message.message)).start();
 
                         }
                     }
                 } else if (command.startsWith("msend")) {
+                    if (!participant.isRegistered || !participant.isConnected) {
+                        continue;
+                    }
                     String[] tokens = command.split(" ");
                     String message = "";
                     for (int i = 1; i < tokens.length; i++) {
