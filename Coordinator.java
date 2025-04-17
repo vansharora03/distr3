@@ -66,6 +66,17 @@ public class Coordinator {
 
     }
     public static void handleClient(Socket clientSocket) {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(configFile));
+            String line = br.readLine();
+            port = Integer.parseInt(line);
+            line = br.readLine();
+            timeThreshold = Integer.parseInt(line);
+            br.close();
+        } catch (IOException e) {
+            System.out.println("Error reading config file");
+            System.exit(1);
+        }
         Participant participant = participants.get(clientSocket.getInetAddress().toString().substring(1));
         System.out.println("Client connected: " + clientSocket.getInetAddress());
         try {
