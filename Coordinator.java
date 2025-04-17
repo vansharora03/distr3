@@ -100,7 +100,7 @@ public class Coordinator {
                     participant.out = new PrintWriter(socket.getOutputStream(), true);
                     long currentTime = System.currentTimeMillis();
                     for (Message message : messages) {
-                        System.out.println(timeThreshold)
+                        System.out.println(timeThreshold);
                         if (message.timestamp.getTime() >= currentTime - (timeThreshold * 1000)) {
                             System.out.println("Sending message to " + participant.id);
                             new Thread(() -> participant.out.println("Sender: " + message.sender.id + " Message: " + message.message)).start();
