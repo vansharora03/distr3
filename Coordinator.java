@@ -12,8 +12,8 @@ import java.util.HashMap;
 public class Coordinator {
     public static int port;
     public static int timeThreshold;
-    public static ArrayList<Message> messages;
-    public static HashMap<String, Participant> participants;
+    public volatile static ArrayList<Message> messages;
+    public volatile static HashMap<String, Participant> participants;
 
     public static void main(String[] args) {
         participants = new HashMap<>();
@@ -99,11 +99,12 @@ public class Coordinator {
                     participant.socket = socket;
                     participant.out = new PrintWriter(socket.getOutputStream(), true);
                     long currentTime = System.currentTimeMillis();
-                    for (Message message : messages) {
-                        if (message.timestamp.getTime() >= currentTime - (timeThreshold * 1000)) {
-                            System.out.println("Sending message to " + participant.id);
-                            new Thread(() -> participant.out.println("Sender: " + message.sender.id + " Message: " + message.message)).start();
-
+                    synchronized (messages) {
+                        for (Message message : messages) {
+                            if (message.timestamp.getTime() >= currentTime - (timeThreshold * 1000)) {
+                                System.out.println("Sending message to " + participant.id);
+                                new Thread(() -> participant.out.println("Sender: " + message.sender.id + " Message: " + message.message)).start();
+                            }
                         }
                     }
                 } else if (command.startsWith("msend")) {
