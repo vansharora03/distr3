@@ -101,7 +101,9 @@ public class Coordinator {
                     long currentTime = System.currentTimeMillis();
                     for (Message message : messages) {
                         System.out.println("Checking message: " + message.message);
-                        System.out.println("Message time: " + message.timestamp);
+                        System.out.println("Message time: " + message.timestamp.getTime());
+                        System.out.println("currentTime: " + currentTime);
+                        System.out.println("Threshold: " + (currentTime - (timeThreshold * 1000)));
                         if (message.timestamp.getTime() >= currentTime - (timeThreshold * 1000)) {
                             System.out.println("Sending message to " + participant.id);
                             new Thread(() -> participant.out.println("Sender: " + message.sender.id + " Message: " + message.message)).start();
