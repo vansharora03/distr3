@@ -22,6 +22,8 @@ public class Coordinator {
             System.out.println("Usage: java Coordinator <config file name>");
             System.exit(1);
         }
+        String configFile = "cconfig.txt";
+
         int port = -1;
         int timeThreshold = -1;
 
