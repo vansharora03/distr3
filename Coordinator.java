@@ -99,7 +99,7 @@ public class Coordinator {
                     participant.socket = socket;
                     participant.out = new PrintWriter(socket.getOutputStream(), true);
                     for (Message message : messages) {
-                        if (message.timestamp.getTime() > new Date().getTime() - timeThreshold) {
+                        if (message.timestamp.getTime() > new Date().getTime() - (timeThreshold * 1000)) {
                             new Thread(() -> participant.out.println("Sender: " + message.sender.id + "Message: " + message.message)).start();
 
                         }
