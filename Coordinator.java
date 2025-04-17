@@ -98,10 +98,11 @@ public class Coordinator {
                     Socket socket = new Socket(participant.ip, participant.port);
                     participant.socket = socket;
                     participant.out = new PrintWriter(socket.getOutputStream(), true);
+                    long currentTime = System.currentTimeMillis();
                     for (Message message : messages) {
-                        if (message.timestamp.getTime() > new Date().getTime() - (timeThreshold * 1000)) {
+                        if (message.timestamp.getTime() >= currentTime - (timeThreshold * 1000)) {
                             System.out.println("Sending message to " + participant.id);
-                            new Thread(() -> participant.out.println("Sender: " + message.sender.id + "Message: " + message.message)).start();
+                            new Thread(() -> participant.out.println("Sender: " + message.sender.id + " Message: " + message.message)).start();
 
                         }
                     }
