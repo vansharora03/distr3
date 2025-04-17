@@ -22,7 +22,6 @@ public class Coordinator {
             System.out.println("Usage: java Coordinator <config file name>");
             System.exit(1);
         }
-        String configFile = args[0];
         int port = -1;
         int timeThreshold = -1;
 
@@ -66,6 +65,7 @@ public class Coordinator {
 
     }
     public static void handleClient(Socket clientSocket) {
+        String configFile = "cconfig.txt";
         try {
             BufferedReader br = new BufferedReader(new FileReader(configFile));
             String line = br.readLine();
