@@ -10,8 +10,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Coordinator {
-    public static int port;
-    public static int timeThreshold;
+    public static volatile int port;
+    public volatile static int timeThreshold;
     public volatile static ArrayList<Message> messages;
     public volatile static HashMap<String, Participant> participants;
 
@@ -100,10 +100,7 @@ public class Coordinator {
                     participant.out = new PrintWriter(socket.getOutputStream(), true);
                     long currentTime = System.currentTimeMillis();
                     for (Message message : messages) {
-                        System.out.println("Checking message: " + message.message);
-                        System.out.println("Message time: " + message.timestamp.getTime());
-                        System.out.println("currentTime: " + currentTime);
-                        System.out.println("Threshold: " + (currentTime - (timeThreshold * 1000)));
+                        System.out.println(timeThreshold)
                         if (message.timestamp.getTime() >= currentTime - (timeThreshold * 1000)) {
                             System.out.println("Sending message to " + participant.id);
                             new Thread(() -> participant.out.println("Sender: " + message.sender.id + " Message: " + message.message)).start();
